@@ -1,7 +1,16 @@
 <script setup lang="ts">
 import SideMenu from '@/components/SideMenu.vue';
 import { Form, House, LayoutTemplate, LogOutIcon, Moon, PanelLeftOpen, SlidersHorizontal, Sun, Table2 } from '@lucide/vue';
-import { computed, ref } from 'vue';
+import { computed, provide, ref } from 'vue';
+import { RouterLink } from 'vue-router';
+import { useTheme } from '@/composables/useTheme';
+
+const { theme, toggleTheme } = useTheme()
+
+const clickTheme = (e: any) => {
+  const selection = e.target.checked ? 'dark' : 'light'
+  toggleTheme(selection)
+}
 
 const menus = ref([
   {
@@ -31,9 +40,20 @@ const menus = ref([
     ]
   }
 ])
+
+const pageTitle = ref('Default Title')
+const breadcrumbs = ref([])
+provide('setPageMeta', (title: string, items: Array<object>) => {
+  pageTitle.value = title
+  breadcrumbs.value = items
+})
+
 const isBreakpointLg = computed(() => {
   return window.innerWidth > 1024
 })
+const logout = () => {
+  document.location.href = "/login"
+}
 
 </script>
 
@@ -48,7 +68,7 @@ const isBreakpointLg = computed(() => {
         <div class="px-4 grow">The Sound Project</div>
         <div class="dropdown dropdown-end">
           <div tabindex="0" role="button" class="avatar">
-            <div class="w-10 cursor-pointer rounded-full">
+            <div class="w-10 cursor-pointer rounded-full bg-gray-400">
               <img src="https://img.daisyui.com/images/profile/demo/yellingcat@192.webp" />
             </div>
           </div>
@@ -58,18 +78,32 @@ const isBreakpointLg = computed(() => {
             </li>
             <li class="my-3">
               <label class="swap swap-rotate">
-                <input type="checkbox" class="theme-controller" value="dark" checked />
+                <input type="checkbox" class="theme-controller" value="dark" :checked="theme ===
+                  'dark'" @change="clickTheme" />
                 <Sun class="swap-on" />
                 <Moon class="swap-off" />
               </label>
             </li>
-            <li class="my-3"><button class="btn btn-outline btn-error">
+            <li class="my-3">
+              <button class="btn btn-outline btn-error" @click="logout">
                 <LogOutIcon />&nbsp;Logout
-              </button></li>
+              </button>
+            </li>
           </ul>
         </div>
       </nav>
       <div class="px-5 py-8 grow">
+        <div>
+          <h1>{{ pageTitle }}</h1>
+          <div>{{ breadcrumbs }}</div>
+          <div v-if="breadcrumbs.length > 0" class="breadcrumbs text-sm">
+            <ul>
+              <li v-for="b in breadcrumbs">
+                <component :is="b.href != '' ? RouterLink : 'p'" :to="b.href">{{ b.label }}</component>
+              </li>
+            </ul>
+          </div>
+        </div>
         <slot />
       </div>
       <footer class="footer sm:footer-horizontal footer-center bg-base-300 text-base-content p-4">
