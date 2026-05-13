@@ -1,19 +1,110 @@
 <script setup>
-import { RouterLink } from 'vue-router';
+import DataTable from '@/components/DataTable.vue'
+import { MainService } from '@/services/Axios'
+import { PlusIcon } from '@lucide/vue'
+import { reactive } from 'vue'
+
+const fetchData = (params) => {
+  return MainService.get("/data-list.json", { params: { ...params } })
+}
+
+const tbColumns = [
+  {
+    data: "name",
+    label: "Name",
+    sortable: true,
+    searchable: true
+  },
+  {
+    data: "status",
+    label: "Status",
+    searchable: true,
+  },
+  {
+    data: "priority",
+    label: "Priority",
+    classHeader: "text-end",
+    classContent: "text-end",
+    sortable: true,
+  },
+  {
+    data: "uptime_percentage",
+    label: "Uptime(%)",
+    info: "Makin tinggi makin baik",
+    sortable: true,
+  },
+  {
+    data: "metadata",
+    label: "Version",
+    sortable: true,
+  },
+  {
+    data: "actions",
+    label: "Actions",
+    classContent: "text-center"
+  }
+]
+
+const tbOptions = {
+  serverSide: false,
+  numbering: true,
+}
+
+const extraParams = reactive({
+  category: "",
+  status: "",
+})
+
 </script>
 <template>
-  <div class="flex justify-between">
-    <h1 class="text-2xl font-medium">Template Index</h1>
-    <div class="breadcrumbs text-sm">
-      <ul>
-        <li>
-          <RouterLink to="/">Home</RouterLink>
-        </li>
-        <li>
-          <RouterLink to="/template">Template</RouterLink>
-        </li>
-        <li>Add Document</li>
-      </ul>
+  <div class="flex justify-between items-center mb-4 gap-4">
+    <div class="flex gap-2">
+      <select v-model="extraParams.status" class="select select-bordered select-sm">
+        <option value="">All Status</option>
+        <option value="active">Active</option>
+        <option value="maintenance">Maintenance</option>
+        <option value="deprecated">Deprecated</option>
+      </select>
+      <input type="text" v-model="extraParams.category" class="input input-bordered input-sm"
+        placeholder="Filter category...">
     </div>
+  </div>
+  <div>
+    <DataTable :columns="tbColumns" :options="tbOptions" :fetch-data="fetchData" :extra-params="extraParams">
+      <template v-slot:topright>
+        <RouterLink to="/template/form" class="btn btn-primary btn-sm">
+          <PlusIcon :size="16" /> Tambah
+        </RouterLink>
+      </template>
+
+      <template #cell(name)="{ item }">
+        <div class="flex flex-col">
+          <span class="font-bold text-base-content">{{ item.name }}</span>
+          <span class="text-xs opacity-50">{{ item.category }}</span>
+        </div>
+      </template>
+
+      <template #cell(status)="{ value }">
+        <div class="badge badge-sm" :class="{
+          'badge-success': value === 'active',
+          'badge-warning': value === 'maintenance',
+          'badge-error': value === 'deprecated'
+        }">
+          {{ value }}
+        </div>
+      </template>
+      <template #cell(metadata)="{ value }">
+        <div class="badge badge-sm badge-error">
+          {{ value }}
+        </div>
+      </template>
+
+      <template #cell(actions)="{ item }">
+        <div class="flex gap-2 justify-center">
+          <button class="btn btn-ghost btn-xs text-info" @click="console.log('Edit', item.id)">Edit</button>
+          <button class="btn btn-ghost btn-xs text-error" @click="console.log('Delete', item.id)">Delete</button>
+        </div>
+      </template>
+    </DataTable>
   </div>
 </template>
