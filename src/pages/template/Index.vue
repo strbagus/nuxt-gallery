@@ -35,8 +35,7 @@ const tbColumns = [
   },
   {
     data: "metadata",
-    label: "Version",
-    sortable: true,
+    label: "Metadata",
   },
   {
     data: "actions",
@@ -54,7 +53,6 @@ const extraParams = reactive({
   category: "",
   status: "",
 })
-
 </script>
 <template>
   <div class="flex justify-between items-center mb-4 gap-4">
@@ -81,6 +79,9 @@ const extraParams = reactive({
         <div class="flex flex-col">
           <span class="font-bold text-base-content">{{ item.name }}</span>
           <span class="text-xs opacity-50">{{ item.category }}</span>
+          <div class="flex gap-2 flex-wrap mt-2">
+            <span v-for="tag in item.tags" class="badge badge-sm badge-primary">{{ tag }}</span>
+          </div>
         </div>
       </template>
 
@@ -93,10 +94,13 @@ const extraParams = reactive({
           {{ value }}
         </div>
       </template>
-      <template #cell(metadata)="{ value }">
-        <div class="badge badge-sm badge-error">
-          {{ value }}
-        </div>
+      <template #cell(metadata)="{ item }">
+        <ul>
+          <li>Version:&nbsp; <span class="badge">{{ item.metadata.version }}</span></li>
+          <li>Owner:&nbsp; <span class="badge">{{ item.metadata.owner }}</span></li>
+          <li>Created At:&nbsp; <span class="badge">{{ item.created_at }}</span></li>
+          <li>Updated At:&nbsp; <span class="badge">{{ item.updated_at }}</span></li>
+        </ul>
       </template>
 
       <template #cell(actions)="{ item }">
