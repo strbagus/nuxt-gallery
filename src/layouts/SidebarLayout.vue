@@ -5,6 +5,7 @@ import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useTheme } from '@/composables/useTheme';
 import Breadcrumb from '@/components/Breadcrumb.vue';
+import { useConfirm } from '@/composables/useConfirm';
 const { theme, toggleTheme } = useTheme()
 
 const clickTheme = (e: any) => {
@@ -50,8 +51,19 @@ const menus = ref([
 const isBreakpointLg = computed(() => {
   return window.innerWidth > 1024
 })
-const logout = () => {
-  document.location.href = "/login"
+const confirm = useConfirm()
+const logout = async () => {
+
+  const ok = await confirm.ask({
+    title: 'Logout',
+    message: 'Are you sure to exit this page?',
+    confirmText: 'Yes',
+    type: 'primary'
+  })
+  if (ok) {
+    document.location.href = "/login"
+  }
+
 }
 </script>
 
