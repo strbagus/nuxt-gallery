@@ -1,9 +1,13 @@
 <script setup>
 import DataTable from '@/components/DataTable.vue'
+import { useConfirm } from '@/composables/useConfirm'
+import { useToast } from '@/composables/useToast'
 import { MainService } from '@/services/Axios'
 import { PlusIcon } from '@lucide/vue'
 import { reactive } from 'vue'
 
+const toast = useToast()
+const confirm = useConfirm()
 const fetchData = (params) => {
   return MainService.get("/data-list.json", { params: { ...params } })
 }
@@ -53,6 +57,22 @@ const extraParams = reactive({
   category: "",
   status: "",
 })
+const deleteItem = async () => {
+  const ok = await confirm.ask({
+    title: 'Delete Record',
+    message: 'This will permanently remove record. Continue?',
+    confirmText: 'Yes, Delete',
+    type: 'error'
+  })
+
+  if (ok) {
+    try {
+      toast.success('Record deleted')
+    } catch (e) {
+      toast.error('Failed to delete')
+    }
+  }
+}
 </script>
 <template>
   <div class="flex justify-between items-center mb-4 gap-4">
@@ -106,7 +126,7 @@ const extraParams = reactive({
       <template #cell(actions)="{ item }">
         <div class="flex gap-2 justify-center">
           <button class="btn btn-ghost btn-xs text-info" @click="console.log('Edit', item.id)">Edit</button>
-          <button class="btn btn-ghost btn-xs text-error" @click="console.log('Delete', item.id)">Delete</button>
+          <button class="btn btn-ghost btn-xs text-error" @click="deleteItem(item.id)">Delete</button>
         </div>
       </template>
     </DataTable>
