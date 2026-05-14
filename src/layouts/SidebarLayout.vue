@@ -1,16 +1,22 @@
 <script setup lang="ts">
 import SideMenu from '@/components/SideMenu.vue';
 import { Form, House, LayoutTemplate, LogOutIcon, Moon, PanelLeftOpen, SlidersHorizontal, Sun, Table2 } from '@lucide/vue';
-import { computed, provide, ref } from 'vue';
-import { RouterLink } from 'vue-router';
+import { computed, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { useTheme } from '@/composables/useTheme';
-
+import Breadcrumb from '@/components/Breadcrumb.vue';
 const { theme, toggleTheme } = useTheme()
 
 const clickTheme = (e: any) => {
   const selection = e.target.checked ? 'dark' : 'light'
   toggleTheme(selection)
 }
+
+const route = useRoute()
+const reloadKey = ref(route.path)
+watch(() => route.path, () => {
+  reloadKey.value = route.path
+})
 
 const menus = ref([
   {
@@ -41,27 +47,19 @@ const menus = ref([
   }
 ])
 
-const pageTitle = ref('Default Title')
-const breadcrumbs = ref([])
-provide('setPageMeta', (title: string, items: Array<object>) => {
-  pageTitle.value = title
-  breadcrumbs.value = items
-})
-
 const isBreakpointLg = computed(() => {
   return window.innerWidth > 1024
 })
 const logout = () => {
   document.location.href = "/login"
 }
-
 </script>
 
 <template>
   <div class="drawer lg:drawer-open">
     <input id="my-drawer-4" type="checkbox" class="drawer-toggle" :checked="isBreakpointLg" />
     <div class="drawer-content flex flex-col">
-      <nav class="navbar w-full bg-base-300">
+      <nav class="navbar w-full shadow-lg border-b border-base-300 sticky top-0 z-10 bg-base-200">
         <label for="my-drawer-4" aria-label="open sidebar" class="btn btn-square btn-ghost">
           <PanelLeftOpen :size="16" />
         </label>
@@ -72,7 +70,8 @@ const logout = () => {
               <img src="https://img.daisyui.com/images/profile/demo/yellingcat@192.webp" />
             </div>
           </div>
-          <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+          <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2
+            shadow-sm">
             <li class="my-3">
               Satrio Bagus
             </li>
@@ -93,20 +92,13 @@ const logout = () => {
         </div>
       </nav>
       <div class="px-5 py-8 grow">
-        <div>
-          <h1>{{ pageTitle }}</h1>
-          <div>{{ breadcrumbs }}</div>
-          <div v-if="breadcrumbs.length > 0" class="breadcrumbs text-sm">
-            <ul>
-              <li v-for="b in breadcrumbs">
-                <component :is="b.href != '' ? RouterLink : 'p'" :to="b.href">{{ b.label }}</component>
-              </li>
-            </ul>
-          </div>
+        <div class="flex justify-between" :key="reloadKey">
+          <h1>Page Title</h1>
+          <Breadcrumb />
         </div>
         <slot />
       </div>
-      <footer class="footer sm:footer-horizontal footer-center bg-base-300 text-base-content p-4">
+      <footer class="footer footer-center bg-base-300 text-base-content p-4">
         <aside>
           <p>Copyright © {{ new Date().getFullYear() }} - All right reserved by <a href="https://github.com/strbagus"
               class="link" target="_blank">strbagus</a></p>
