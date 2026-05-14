@@ -2,8 +2,10 @@
 import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { SaveIcon, XIcon } from '@lucide/vue'
+import FormField from '@/components/FormField.vue'
 
 const router = useRouter()
+const errors = reactive({})
 
 const form = reactive({
   name: '',
@@ -19,7 +21,26 @@ const form = reactive({
   }
 })
 
+const validate = () => {
+  Object.keys(errors).forEach(key => delete errors[key])
+  let isValid = true
+
+  if (!form.name) {
+    errors.name = 'Name is required'
+    isValid = false
+  }
+
+  if (form.uptime_percentage < 0 || form.uptime_percentage > 100) {
+    errors.uptime_percentage = 'Uptime must be between 0 and 100'
+    isValid = false
+  }
+
+  return isValid
+}
+
 const handleSubmit = () => {
+  if (!validate()) return
+
   console.log('Form submitted:', form)
   router.push('/template')
 }
@@ -36,74 +57,49 @@ const handleCancel = () => {
 
       <form @submit.prevent="handleSubmit" class="space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="form-control w-full">
-            <label class="label">
-              <span class="label-text font-semibold">Name</span>
-            </label>
-            <input v-model="form.name" type="text" placeholder="e.g. Alpha Service Mesh"
-              class="input input-bordered w-full" required />
-          </div>
 
-          <div class="form-control w-full">
-            <label class="label">
-              <span class="label-text font-semibold">Category</span>
-            </label>
-            <input v-model="form.category" type="text" placeholder="e.g. Infrastructure"
+          <FormField label="Name" required :error="errors.name" v-slot="{ id, isError }">
+            <input v-model="form.name" :id="id" type="text" placeholder="e.g. Alpha Service Mesh"
+              class="input input-bordered w-full" :class="{ 'input-error': isError }" />
+          </FormField>
+
+          <FormField label="Category" v-slot="{ id }">
+            <input v-model="form.category" :id="id" type="text" placeholder="e.g. Infrastructure"
               class="input input-bordered w-full" />
-          </div>
+          </FormField>
 
-          <div class="form-control w-full">
-            <label class="label">
-              <span class="label-text font-semibold">Status</span>
-            </label>
-            <select v-model="form.status" class="select select-bordered w-full">
+          <FormField label="Status" v-slot="{ id }">
+            <select v-model="form.status" :id="id" class="select select-bordered w-full">
               <option value="active">Active</option>
               <option value="maintenance">Maintenance</option>
               <option value="deprecated">Deprecated</option>
             </select>
-          </div>
+          </FormField>
 
-          <div class="form-control w-full">
-            <label class="label">
-              <span class="label-text font-semibold">Priority</span>
-            </label>
-            <input v-model.number="form.priority" type="number" placeholder="1" class="input input-bordered w-full" />
-          </div>
-
-          <div class="form-control w-full">
-            <label class="label">
-              <span class="label-text font-semibold">Uptime (%)</span>
-            </label>
-            <input v-model.number="form.uptime_percentage" type="number" step="0.01" placeholder="99.99"
+          <FormField label="Priority" v-slot="{ id }">
+            <input v-model.number="form.priority" :id="id" type="number" placeholder="1"
               class="input input-bordered w-full" />
-          </div>
+          </FormField>
 
-          <div class="form-control w-full">
-            <label class="label">
-              <span class="label-text font-semibold">Version</span>
-            </label>
-            <input v-model="form.metadata.version" type="text" placeholder="v1.0.0"
-              class="input input-bordered w-full" />
-          </div>
+          <FormField label="Uptime (%)" :error="errors.uptime_percentage" v-slot="{ id, isError }">
+            <input v-model.number="form.uptime_percentage" :id="id" type="number" step="0.01" placeholder="99.99"
+              class="input input-bordered w-full" :class="{ 'input-error': isError }" />
+          </FormField>
 
-          <div class="form-control w-full">
-            <label class="label">
-              <span class="label-text font-semibold">Owner</span>
-            </label>
-            <input v-model="form.metadata.owner" type="text" placeholder="DevOps Team"
+          <FormField label="Version" v-slot="{ id }">
+            <input v-model="form.metadata.version" :id="id" type="text" placeholder="v1.0.0"
               class="input input-bordered w-full" />
-          </div>
+          </FormField>
 
-          <div class="form-control w-full">
-            <label class="label">
-              <span class="label-text font-semibold">Tags</span>
-            </label>
-            <input v-model="form.tags" type="text" placeholder="comma separated tags"
+          <FormField label="Owner" v-slot="{ id }">
+            <input v-model="form.metadata.owner" :id="id" type="text" placeholder="DevOps Team"
               class="input input-bordered w-full" />
-            <label class="label">
-              <span class="label-text-alt opacity-60">Enter tags separated by commas</span>
-            </label>
-          </div>
+          </FormField>
+
+          <FormField label="Tags" hint="Enter tags separated by commas" v-slot="{ id }">
+            <input v-model="form.tags" :id="id" type="text" placeholder="comma separated tags"
+              class="input input-bordered w-full" />
+          </FormField>
         </div>
 
         <div class="form-control">
