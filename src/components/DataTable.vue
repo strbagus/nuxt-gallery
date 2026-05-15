@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowDownNarrowWide, ArrowDownUp, ArrowUpNarrowWide, Search } from '@lucide/vue';
+import { ArrowDownNarrowWide, ArrowDownUp, ArrowUpNarrowWide, Info, Search } from '@lucide/vue';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -113,8 +113,7 @@ const comData = computed(() => {
 
     meta.total = result.length
 
-    if (params.orderBy) {
-      result = [...result].sort((a, b) => {
+    if (params.orderBy) { result = [...result].sort((a, b) => {
         const valueA = resolveValue(a, params.orderBy);
         const valueB = resolveValue(b, params.orderBy);
 
@@ -220,8 +219,7 @@ const handleSort = (c: any) => {
           <Search :size="16" />
           <input type="search" v-model="params.search" @input="params.page = 1" placeholder="Search..." />
         </label>
-        <span class="link text-base-content italic opacity-65 text-sm"
-          @click="handleClear">clear</span>
+        <span class="link text-base-content italic opacity-65 text-sm" @click="handleClear">clear</span>
       </div>
       <div>
         <slot name="topright" />
@@ -241,9 +239,12 @@ const handleSort = (c: any) => {
             <thead>
               <tr class="bg-base-300 text-base-content">
                 <th v-if="props.options.numbering" class="w-5 justify-center">No</th>
-                <th v-for="h in columns" :class="[h.classHeader, h.sortable ? 'cursor-pointer' : 'pointer-events-none']"
-                  @click="handleSort(h.data)">
-                  <div class="flex items-center gap-1">
+                <th v-for="h in columns" :class="[h.sortable ? 'cursor-pointer' : '']"
+                  @click="h.sortable ? handleSort(h.data) : null">
+                  <div class="flex items-center gap-1" :class="h.classHeader">
+                    <div v-if="h.info" class="tooltip tooltip-bottom" :data-tip="h.info">
+                      <Info :size="14" class="text-info cursor-help" @click.stop />
+                    </div>
                     <span>{{ h.label }}</span>
                     <template v-if="h.sortable">
                       <ArrowDownUp v-if="params.orderBy != h.data" :size="16" color="gray" />
