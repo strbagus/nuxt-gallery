@@ -1,8 +1,9 @@
 <script setup>
-import { reactive } from 'vue'
+import { onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { SaveIcon, XIcon } from '@lucide/vue'
 import FormField from '@/components/FormField.vue'
+import { usePageMeta } from '@/composables/usePageMeta'
 
 const router = useRouter()
 const errors = reactive({})
@@ -48,6 +49,11 @@ const handleSubmit = () => {
 const handleCancel = () => {
   router.push('/template')
 }
+const { setPageMeta } = usePageMeta()
+
+onMounted(() => {
+  setPageMeta('Template Form')
+})
 </script>
 
 <template>

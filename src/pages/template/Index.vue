@@ -2,6 +2,7 @@
 import DataTable from '@/components/DataTable.vue'
 import { useConfirm } from '@/composables/useConfirm'
 import { useToast } from '@/composables/useToast'
+import { usePageMeta } from '@/composables/usePageMeta'
 import { MainService } from '@/services/Axios'
 import { PlusIcon } from '@lucide/vue'
 import { onMounted, reactive } from 'vue'
@@ -10,6 +11,7 @@ import { useRoute } from 'vue-router'
 const toast = useToast()
 const confirm = useConfirm()
 const route = useRoute()
+const { setPageMeta } = usePageMeta()
 const fetchData = (params) => {
   return MainService.get("/data-list.json", { params: { ...params } })
 }
@@ -63,6 +65,11 @@ const extraParams = reactive({
 })
 
 onMounted(() => {
+  setPageMeta('Table Template', [
+    { label: 'Home', href: '/' },
+    { label: 'Templates' },
+    { label: 'Table View' }
+  ])
   if (route.query.status) extraParams.status = route.query.status.toString()
   if (route.query.category) extraParams.category = route.query.category.toString()
 })

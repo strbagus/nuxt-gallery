@@ -1,6 +1,13 @@
 <script setup lang="ts">
+import { usePageMeta } from '@/composables/usePageMeta';
 import { Database } from '@lucide/vue';
+import { onMounted } from 'vue';
 import { RouterLink } from 'vue-router';
+
+const { setPageMeta } = usePageMeta()
+onMounted(() => {
+  setPageMeta('Dashboard')
+})
 </script>
 <template>
   <div class="flex flex-wrap">
