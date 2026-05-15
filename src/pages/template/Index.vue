@@ -29,14 +29,16 @@ const tbColumns = [
   {
     data: "priority",
     label: "Priority",
-    classHeader: "text-end",
+    classHeader: "justify-end",
     classContent: "text-end",
     sortable: true,
   },
   {
     data: "uptime_percentage",
     label: "Uptime(%)",
-    info: "Makin tinggi makin baik",
+    classHeader: "justify-end",
+    classContent: "text-end",
+    info: "Persentase Service Menyala",
     sortable: true,
   },
   {
@@ -129,6 +131,9 @@ const deleteItem = async () => {
         }">
           {{ value }}
         </div>
+      </template>
+      <template #cell(uptime_percentage)="{ value }">
+        <span>{{ value.toFixed(2) }}%</span>
       </template>
       <template #cell(metadata)="{ item }">
         <ul>
