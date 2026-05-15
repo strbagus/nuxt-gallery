@@ -6,7 +6,9 @@ import { useRoute } from 'vue-router';
 import { useTheme } from '@/composables/useTheme';
 import Breadcrumb from '@/components/Breadcrumb.vue';
 import { useConfirm } from '@/composables/useConfirm';
+import { usePageMeta } from '@/composables/usePageMeta';
 const { theme, toggleTheme } = useTheme()
+const { title, layoutTitle } = usePageMeta()
 
 const clickTheme = (e: any) => {
   const selection = e.target.checked ? 'dark' : 'light'
@@ -75,7 +77,7 @@ const logout = async () => {
         <label for="my-drawer-4" aria-label="open sidebar" class="btn btn-square btn-ghost">
           <PanelLeftOpen :size="16" />
         </label>
-        <div class="px-4 grow">The Sound Project</div>
+        <div class="px-4 grow font-bold text-lg">{{ layoutTitle }}</div>
         <div class="dropdown dropdown-end">
           <div tabindex="0" role="button" class="avatar">
             <div class="w-10 cursor-pointer rounded-full bg-gray-400">
@@ -104,8 +106,8 @@ const logout = async () => {
         </div>
       </nav>
       <div class="px-5 py-8 grow">
-        <div class="flex justify-between" :key="reloadKey">
-          <h1>Page Title</h1>
+        <div class="flex flex-col md:flex-row md:justify-between items-start md:items-center" :key="reloadKey">
+          <h1 class="text-2xl font-bold text-base-content">{{ title || 'Baseline' }}</h1>
           <Breadcrumb />
         </div>
         <slot />

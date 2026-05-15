@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
+import { usePageMeta } from '@/composables/usePageMeta';
 
 interface Breadcrumb {
   label: string;
-  href: string;
+  href?: string;
 }
 
+const { breadcrumbs: manualBreadcrumbs } = usePageMeta()
 const route = useRoute()
 
 const breadcrumbs = computed<Breadcrumb[]>(() => {
+  if (manualBreadcrumbs.value) return manualBreadcrumbs.value
+
   const pathNodes = route.path.split('/').filter(node => node !== '');
 
   const crumbs: Breadcrumb[] = [
@@ -32,8 +36,8 @@ const breadcrumbs = computed<Breadcrumb[]>(() => {
 <template>
   <div class="breadcrumbs text-sm font-semibold capitalize my-4">
     <ul>
-      <li v-for="(crumb, index) in breadcrumbs" :key="crumb.href">
-        <RouterLink v-if="index < breadcrumbs.length - 1" :to="crumb.href"
+      <li v-for="(crumb, index) in breadcrumbs" :key="crumb.href || crumb.label">
+        <RouterLink v-if="crumb.href && index < breadcrumbs.length - 1" :to="crumb.href"
           class="opacity-60 hover:opacity-100 transition-opacity">
           {{ crumb.label }}
         </RouterLink>
