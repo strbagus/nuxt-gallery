@@ -10,6 +10,8 @@ const props = defineProps({
   extraParams: { type: Object, required: false }
 })
 
+const emit = defineEmits(['clear'])
+
 const isLoading = ref(false)
 const data = ref([])
 const paramDefault = () => ({
@@ -20,6 +22,7 @@ const paramDefault = () => ({
   orderDir: ''
 })
 const params = reactive(paramDefault())
+const isClearing = ref(false)
 
 const meta = reactive({
   total: 50
@@ -97,6 +100,17 @@ const comData = computed(() => {
         });
       });
     }
+
+    if (props.extraParams) {
+      result = result.filter((item) => {
+        return Object.entries(props.extraParams).every(([key, value]) => {
+          if (value === null || value === undefined || value === '') return true;
+          const itemValue = resolveValue(item, key);
+          return String(itemValue).toLowerCase() === String(value).toLowerCase();
+        });
+      });
+    }
+
     meta.total = result.length
 
     if (params.orderBy) {
@@ -133,22 +147,38 @@ let debounceTimer = null
 watch(
   () => ({ ...params, ...props.extraParams }),
   (newParams) => {
-    const cleanExtraParams = props.extraParams ? Object.fromEntries(
-      Object.entries(props.extraParams).filter(([_, v]) => v !== null && v !== undefined && v !== '')
-    ) : {}
+    if (isClearing.value) return
 
-    router.replace({
-      query: {
-        ...route.query,
-        limit: newParams.limit || 10,
-        page: newParams.page || 1,
-        order_by: newParams.orderBy || undefined,
-        order_dir: newParams.orderDir || undefined,
-        search: newParams.search || undefined,
-        search_by: searchBy.value || undefined,
-        ...cleanExtraParams
+    const query = { ...route.query }
+
+    const updateOrDelete = (key: string, val: any, defaultVal: any = undefined) => {
+      if (val !== undefined && val !== null && val !== '' && val !== defaultVal) {
+        query[key] = val
+      } else {
+        delete query[key]
       }
-    })
+    }
+
+    updateOrDelete('limit', newParams.limit, 10)
+    updateOrDelete('page', newParams.page, 1)
+    updateOrDelete('order_by', newParams.orderBy)
+    updateOrDelete('order_dir', newParams.orderDir)
+    updateOrDelete('search', newParams.search)
+
+    if (newParams.search && searchBy.value) {
+      query.search_by = searchBy.value
+    } else {
+      delete query.search_by
+    }
+
+    if (props.extraParams) {
+      Object.keys(props.extraParams).forEach(key => {
+        updateOrDelete(key, props.extraParams[key])
+      })
+    }
+
+    router.replace({ query })
+
     if (props.options.serverSide) {
       isLoading.value = true
       clearTimeout(debounceTimer)
@@ -159,6 +189,14 @@ watch(
   },
   { deep: true }
 )
+
+const handleClear = async () => {
+  isClearing.value = true
+  Object.assign(params, paramDefault())
+  emit('clear')
+  await router.push({ query: {} })
+  isClearing.value = false
+}
 
 const handleSort = (c: any) => {
   params.orderBy = c
@@ -183,7 +221,7 @@ const handleSort = (c: any) => {
           <input type="search" v-model="params.search" @input="params.page = 1" placeholder="Search..." />
         </label>
         <span class="link text-base-content italic opacity-65 text-sm"
-          @click="router.push({ query: {} }); Object.assign(params, paramDefault())">clear</span>
+          @click="handleClear">clear</span>
       </div>
       <div>
         <slot name="topright" />
