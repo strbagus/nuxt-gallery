@@ -1,6 +1,4 @@
 <script setup>
-import { PlusIcon } from '@lucide/vue'
-
 definePageMeta({
   layout: 'admin'
 })
@@ -116,7 +114,7 @@ const deleteItem = async () => {
         @clear="handleClear">
         <template #topright>
           <NuxtLink to="/admin/template/form" class="btn btn-primary btn-sm">
-            <PlusIcon :size="16" /> Tambah
+            <Icon name="lucide:plus" size="16" /> Tambah
           </NuxtLink>
         </template>
 

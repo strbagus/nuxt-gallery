@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { Form, House, LayoutTemplate, LogOutIcon, PanelLeftOpen, SlidersHorizontal, Table2 } from '@lucide/vue';
-
 const { title, layoutTitle } = usePageMeta()
 
 const route = useRoute()
@@ -11,26 +9,26 @@ watch(() => route.path, () => {
 
 const menus = ref([
   {
-    icon: House,
+    icon: 'lucide:house',
     title: "Home",
     path: "/admin",
   },
   {
-    icon: SlidersHorizontal,
+    icon: 'lucide:sliders-horizontal',
     title: "Setting",
     path: "/admin/setting",
   },
   {
-    icon: LayoutTemplate,
+    icon: 'lucide:layout-template',
     title: "Templates",
     sub: [
       {
-        icon: Table2,
+        icon: 'lucide:table-2',
         title: "Table View",
         path: "/admin/template",
       },
       {
-        icon: Form,
+        icon: 'lucide:square-pen', // Form often uses square-pen or similar in lucide
         title: "Form",
         path: "/admin/template/form",
       }
@@ -63,7 +61,7 @@ const logout = async () => {
     <div class="drawer-content flex flex-col">
       <nav class="navbar w-full shadow-lg border-b border-base-300 sticky top-0 z-10 bg-base-200">
         <label for="my-drawer-4" aria-label="open sidebar" class="btn btn-square btn-ghost">
-          <PanelLeftOpen :size="16" />
+          <Icon name="lucide:panel-left-open" size="16" />
         </label>
         <div class="px-4 grow font-bold text-lg">{{ layoutTitle }}</div>
         <div class="dropdown dropdown-end">
@@ -79,7 +77,7 @@ const logout = async () => {
             </li>
             <li class="my-3">
               <button class="btn btn-outline btn-error btn-sm mx-2" @click="logout">
-                <LogOutIcon :size="16" />&nbsp;Logout
+                <Icon name="lucide:log-out" size="16" />&nbsp;Logout
               </button>
             </li>
           </ul>

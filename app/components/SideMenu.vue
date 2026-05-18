@@ -1,7 +1,7 @@
 <script setup lang="ts">
 interface Menu {
   title: string;
-  icon?: any;
+  icon?: string;
   path?: string;
   sub?: Menu[];
 }
@@ -15,7 +15,7 @@ const props = defineProps<{
     <template v-if="m.sub">
       <details close>
         <summary>
-          <component :is="m.icon" :size="16" /><span>&nbsp;{{ m.title }}</span>
+          <Icon v-if="m.icon" :name="m.icon" size="16" /><span>&nbsp;{{ m.title }}</span>
         </summary>
         <ul>
           <SideMenu :menus="m.sub" />
@@ -25,7 +25,7 @@ const props = defineProps<{
     </template>
     <template v-else>
       <NuxtLink v-if="m.path" :to="m.path">
-        <component :is="m.icon" :size="16" />
+        <Icon v-if="m.icon" :name="m.icon" size="16" />
         <span>{{ m.title }}</span>
       </NuxtLink>
     </template>

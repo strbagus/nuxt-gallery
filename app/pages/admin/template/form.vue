@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { SaveIcon, XIcon } from '@lucide/vue'
-
 definePageMeta({
   layout: 'admin'
 })
@@ -125,10 +123,10 @@ onMounted(() => {
 
         <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-base-200">
           <button type="button" class="btn btn-ghost" @click="handleCancel">
-            <XIcon :size="18" /> Cancel
+            <Icon name="lucide:x" size="18" /> Cancel
           </button>
           <button type="submit" class="btn btn-primary">
-            <SaveIcon :size="18" /> Save Template
+            <Icon name="lucide:save" size="18" /> Save Template
           </button>
         </div>
       </form>

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ArrowDownNarrowWide, ArrowDownUp, ArrowUpNarrowWide, Info, Search } from '@lucide/vue';
-
 interface Column {
   data: string;
   label: string;
@@ -243,7 +241,7 @@ const handleSort = (c: string) => {
     <div class="flex justify-between my-3">
       <div class="flex items-end gap-2">
         <label class="input input-sm">
-          <Search :size="16" />
+          <Icon name="lucide:search" size="16" />
           <input v-model="params.search" type="search" placeholder="Search..." @input="params.page = 1">
         </label>
         <span class="link text-base-content italic opacity-65 text-sm cursor-pointer" @click="handleClear">clear</span>
@@ -270,14 +268,14 @@ const handleSort = (c: string) => {
                   @click="h.sortable ? handleSort(h.data) : null">
                   <div class="flex items-center gap-1" :class="h.classHeader">
                     <div v-if="h.info" class="tooltip tooltip-bottom" :data-tip="h.info">
-                      <Info :size="14" class="text-info cursor-help" @click.stop />
+                      <Icon name="lucide:info" size="14" class="text-info cursor-help" @click.stop />
                     </div>
                     <span>{{ h.label }}</span>
                     <template v-if="h.sortable">
-                      <ArrowDownUp v-if="params.orderBy != h.data" :size="16" color="gray" />
+                      <Icon v-if="params.orderBy != h.data" name="lucide:arrow-down-up" size="16" class="text-gray-400" />
                       <template v-else>
-                        <ArrowDownNarrowWide v-if="params.orderDir == 'desc'" :size="16" />
-                        <ArrowUpNarrowWide v-else :size="16" />
+                        <Icon v-if="params.orderDir == 'desc'" name="lucide:arrow-down-narrow-wide" size="16" />
+                        <Icon v-else name="lucide:arrow-up-narrow-wide" size="16" />
                       </template>
                     </template>
                   </div>
