@@ -22,6 +22,6 @@ const { isOpen, options, confirm, cancel } = useConfirm()
       </div>
     </div>
     <!-- Click outside to close (optional) -->
-    <div class="modal-backdrop" @click="cancel"></div>
+    <div class="modal-backdrop" @click="cancel" />
   </div>
 </template>

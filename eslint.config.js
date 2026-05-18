@@ -1,30 +1,23 @@
-import { defineConfig, globalIgnores } from 'eslint/config'
-import globals from 'globals'
-import js from '@eslint/js'
-import pluginVue from 'eslint-plugin-vue'
+import { createConfigForNuxt } from '@nuxt/eslint'
 import pluginOxlint from 'eslint-plugin-oxlint'
-import skipFormatting from 'eslint-config-prettier/flat'
 
-export default defineConfig([
+export default createConfigForNuxt([
   {
-    name: 'app/files-to-lint',
-    files: ['**/*.{vue,js,mjs,jsx}'],
-  },
-
-  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
-
-  {
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-      },
+    files: ['**/*.{vue,js,mjs,jsx,ts,tsx}'],
+    rules: {
+      'vue/multi-word-component-names': 'off',
+      'no-undef': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-dynamic-delete': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { 
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_'
+        }
+      ],
     },
   },
-
-  js.configs.recommended,
-  ...pluginVue.configs['flat/essential'],
-
   ...pluginOxlint.buildFromOxlintConfigFile('.oxlintrc.json'),
-
-  skipFormatting,
 ])

@@ -14,7 +14,7 @@ const { toasts, removeToast } = useToast()
         'alert-warning': toast.type === 'warning',
       }]">
         <span class="text-sm font-medium">{{ toast.message }}</span>
-        <button @click="removeToast(toast.id)" class="btn btn-ghost btn-xs">✕</button>
+        <button class="btn btn-ghost btn-xs" @click="removeToast(toast.id)">✕</button>
       </div>
     </TransitionGroup>
   </div>

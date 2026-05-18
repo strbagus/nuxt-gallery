@@ -8,6 +8,7 @@ export default defineNuxtConfig({
   },
   modules: [
     '@nuxt/icon',
+    '@nuxt/eslint',
   ],
   vite: {
     plugins: [
@@ -15,5 +16,9 @@ export default defineNuxtConfig({
     ],
   },
   css: ['~/assets/style.css'],
-  devtools: { enabled: true }
+  devtools: { enabled: true },
+  routeRules: {
+    '/': { ssr: true },
+    '/admin/**': { ssr: false }
+  }
 })

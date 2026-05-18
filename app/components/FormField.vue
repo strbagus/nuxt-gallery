@@ -35,9 +35,9 @@ const hasError = computed(() => !!props.error)
         <span v-if="required" class="text-error">*</span>
       </span>
     </label>
-    
+
     <!-- Default slot for input/select/textarea -->
-    <slot :id="id" :is-error="hasError"></slot>
+    <slot :id="id" :is-error="hasError" />
 
     <!-- Error Message -->
     <label v-if="error" class="label py-1">

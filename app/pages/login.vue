@@ -9,17 +9,17 @@ const handleLogin = (e: any) => {
   router.push('/admin')
 }
 const ssoLogin = () => {
-  let url = typeof window !== 'undefined' ? window.location.origin : ''
+  const url = typeof window !== 'undefined' ? window.location.origin : ''
   console.log("h: ", url)
 }
 </script>
 <template>
   <div class="min-h-screen flex flex-wrap">
-    <div class="hidden lg:block w-1/4 bg-linear-60 from-accent-content to-accent"></div>
+    <div class="hidden lg:block w-1/4 bg-linear-60 from-accent-content to-accent" />
     <div class="w-full lg:w-3/4 flex items-center">
       <div class="w-full p-3 max-w-md mx-auto">
         <h1 class="text-center text-3xl font-bold">Welcome Back</h1>
-        <div class="w-full my-5 h-2 bg-linear-90 from-transparent via-accent to-transparent"></div>
+        <div class="w-full my-5 h-2 bg-linear-90 from-transparent via-accent to-transparent" />
         <form @submit.prevent="handleLogin">
           <div class="my-2">
             <label for="user">Username</label>

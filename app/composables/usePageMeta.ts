@@ -14,8 +14,8 @@ export const usePageMeta = () => {
     if (newLayoutTitle) {
       layoutTitle.value = newLayoutTitle
     }
-    
-    if (newTitle && process.client) {
+
+    if (newTitle && import.meta.client) {
       document.title = `${newTitle} | ${layoutTitle.value}`
     }
   }

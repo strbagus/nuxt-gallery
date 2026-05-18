@@ -1,5 +1,14 @@
-<script setup>
-const props = defineProps(['menus'])
+<script setup lang="ts">
+interface Menu {
+  title: string;
+  icon?: any;
+  path?: string;
+  sub?: Menu[];
+}
+
+const props = defineProps<{
+  menus: Menu[]
+}>()
 </script>
 <template>
   <li v-for="m in props.menus" :key="m.path || m.title">
@@ -15,7 +24,7 @@ const props = defineProps(['menus'])
 
     </template>
     <template v-else>
-      <NuxtLink :to="m.path">
+      <NuxtLink v-if="m.path" :to="m.path">
         <component :is="m.icon" :size="16" />
         <span>{{ m.title }}</span>
       </NuxtLink>

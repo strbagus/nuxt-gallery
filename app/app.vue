@@ -1,6 +1,7 @@
 <script setup>
 useHead({
   htmlAttrs: {
+    lang: 'en',
     'data-theme': 'dark',
     class: 'dark'
   }

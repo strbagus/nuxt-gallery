@@ -1,5 +1,11 @@
+interface Toast {
+  id: number;
+  message: string;
+  type: string;
+}
+
 export function useToast() {
-  const toasts = useState<any[]>('toasts', () => [])
+  const toasts = useState<Toast[]>('toasts', () => [])
 
   /**
    * @param {string} message - The text to display
@@ -13,7 +19,7 @@ export function useToast() {
     toasts.value.push(toast)
 
     // Auto-remove after duration
-    if (process.client) {
+    if (import.meta.client) {
       setTimeout(() => {
         removeToast(id)
       }, duration)
@@ -21,7 +27,7 @@ export function useToast() {
   }
 
   const removeToast = (id: number) => {
-    toasts.value = toasts.value.filter((t: any) => t.id !== id)
+    toasts.value = toasts.value.filter((t) => t.id !== id)
   }
 
   return {

@@ -1,5 +1,3 @@
-import { ref } from 'vue'
-
 const isOpen = ref(false)
 const options = ref({
   title: 'Confirm Action',
@@ -9,27 +7,27 @@ const options = ref({
   type: 'primary' // primary, error, warning
 })
 
-let resolvePromise: any
+let resolvePromise: (value: boolean) => void
 
 export function useConfirm() {
-  const ask = (config = {}) => {
+  const ask = (config: Partial<typeof options.value> = {}) => {
     // Merge custom config with defaults
     options.value = { ...options.value, ...config }
     isOpen.value = true
 
-    return new Promise((resolve) => {
+    return new Promise<boolean>((resolve) => {
       resolvePromise = resolve
     })
   }
 
   const confirm = () => {
     isOpen.value = false
-    resolvePromise(true)
+    if (resolvePromise) resolvePromise(true)
   }
 
   const cancel = () => {
     isOpen.value = false
-    resolvePromise(false)
+    if (resolvePromise) resolvePromise(false)
   }
 
   return { isOpen, options, ask, confirm, cancel }

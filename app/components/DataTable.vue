@@ -1,17 +1,34 @@
 <script setup lang="ts">
 import { ArrowDownNarrowWide, ArrowDownUp, ArrowUpNarrowWide, Info, Search } from '@lucide/vue';
 
-const props = defineProps({
-  columns: { type: Array<any>, required: true },
-  options: { type: Object, required: true },
-  fetchData: { type: Function, required: true },
-  extraParams: { type: Object, required: false }
+interface Column {
+  data: string;
+  label: string;
+  sortable?: boolean;
+  searchable?: boolean;
+  classHeader?: string;
+  classContent?: string;
+  info?: string;
+}
+
+interface Options {
+  serverSide: boolean;
+  numbering?: boolean;
+}
+
+const props = withDefaults(defineProps<{
+  columns: Column[];
+  options: Options;
+  fetchData: (params: Record<string, any>) => Promise<any>;
+  extraParams?: Record<string, any>;
+}>(), {
+  extraParams: () => ({})
 })
 
 const emit = defineEmits(['clear'])
 
 const isLoading = ref(false)
-const data = ref([])
+const data = ref<any[]>([])
 const paramDefault = () => ({
   limit: 10,
   page: 1,
@@ -23,21 +40,20 @@ const params = reactive(paramDefault())
 const isClearing = ref(false)
 
 const meta = reactive({
-  total: 50
+  total: 0
 })
 
 const page = computed(() => {
   const totalPage = Math.ceil(meta.total / params.limit)
-  const numbers = []
+  const numbers: (number | string)[] = []
   for (let i = 1; i <= totalPage; i++) {
     if (i == 1 || i == totalPage || Math.abs(params.page - i) <= 3) {
       numbers.push(i)
-    }
-    if (Math.abs(params.page - i) == 4) {
+    } else if (Math.abs(params.page - i) == 4) {
       numbers.push("...")
     }
   }
-  const rStart = params.limit * params.page - (params.limit - 1)
+  const rStart = meta.total === 0 ? 0 : params.limit * (params.page - 1) + 1
   const rEnd = Math.min(params.page * params.limit, meta.total)
   return { totalPage, numbers, rStart, rEnd }
 })
@@ -66,7 +82,7 @@ const loadData = async () => {
     data.value = res.data.data || []
     meta.total = res.data.metadata?.total || res.data.data?.length || 0
   } catch (e) {
-    console.log("[FETCH] error: ", e)
+    console.error("[FETCH] error: ", e)
   } finally {
     isLoading.value = false
   }
@@ -89,8 +105,8 @@ onMounted(() => {
   params.search = route.query.search?.toString() || ''
 })
 
-const comData = computed(() => {
-  let result: any[] = data.value
+const filteredData = computed(() => {
+  let result = [...data.value]
   if (!props.options.serverSide) {
     if (params.search !== '') {
       result = result.filter((item) => {
@@ -104,7 +120,7 @@ const comData = computed(() => {
 
     if (props.extraParams) {
       result = result.filter((item) => {
-        return Object.entries(props.extraParams).every(([key, value]) => {
+        return Object.entries(props.extraParams!).every(([key, value]) => {
           if (value === null || value === undefined || value === '') return true;
           const itemValue = resolveValue(item, key);
           return String(itemValue).toLowerCase() === String(value).toLowerCase();
@@ -112,9 +128,8 @@ const comData = computed(() => {
       });
     }
 
-    meta.total = result.length
-
-    if (params.orderBy) { result = [...result].sort((a, b) => {
+    if (params.orderBy) {
+      result = result.sort((a, b) => {
         const valueA = resolveValue(a, params.orderBy);
         const valueB = resolveValue(b, params.orderBy);
 
@@ -132,7 +147,20 @@ const comData = computed(() => {
         return 0;
       });
     }
+  }
+  return result
+})
 
+// Update meta.total when filteredData changes (only for client-side)
+watch(filteredData, (newData) => {
+  if (!props.options.serverSide) {
+    meta.total = newData.length
+  }
+}, { immediate: true })
+
+const comData = computed(() => {
+  let result = filteredData.value
+  if (!props.options.serverSide) {
     const start = (params.page - 1) * params.limit
     const end = start + params.limit
     result = result.slice(start, end)
@@ -153,7 +181,7 @@ watch(
       if (val !== undefined && val !== null && val !== '' && val !== defaultVal) {
         query[key] = val
       } else {
-        delete query[key]
+        delete (query as any)[key]
       }
     }
 
@@ -164,14 +192,14 @@ watch(
     updateOrDelete('search', newParams.search)
 
     if (newParams.search && searchBy.value) {
-      query.search_by = searchBy.value
+      (query as any).search_by = searchBy.value
     } else {
-      delete query.search_by
+      delete (query as any).search_by
     }
 
     if (props.extraParams) {
       Object.keys(props.extraParams).forEach(key => {
-        updateOrDelete(key, props.extraParams[key])
+        updateOrDelete(key, props.extraParams![key])
       })
     }
 
@@ -196,7 +224,7 @@ const handleClear = async () => {
   isClearing.value = false
 }
 
-const handleSort = (c: any) => {
+const handleSort = (c: string) => {
   params.orderBy = c
   if (params.orderDir == '') {
     params.orderDir = 'asc'
@@ -216,9 +244,9 @@ const handleSort = (c: any) => {
       <div class="flex items-end gap-2">
         <label class="input input-sm">
           <Search :size="16" />
-          <input type="search" v-model="params.search" @input="params.page = 1" placeholder="Search..." />
+          <input v-model="params.search" type="search" placeholder="Search..." @input="params.page = 1">
         </label>
-        <span class="link text-base-content italic opacity-65 text-sm" @click="handleClear">clear</span>
+        <span class="link text-base-content italic opacity-65 text-sm cursor-pointer" @click="handleClear">clear</span>
       </div>
       <div>
         <slot name="topright" />
@@ -228,7 +256,7 @@ const handleSort = (c: any) => {
       <div v-if="isLoading"
         class="absolute inset-0 z-10 flex items-center justify-center bg-base-100/60 backdrop-blur-[1px] transition-opacity">
         <div class="flex flex-col items-center gap-2">
-          <span class="loading loading-dots loading-md"></span>
+          <span class="loading loading-dots loading-md" />
           <span class="text-sm font-medium text-base-content/70">Loading data...</span>
         </div>
       </div>
@@ -238,7 +266,7 @@ const handleSort = (c: any) => {
             <thead>
               <tr class="bg-base-300 text-base-content">
                 <th v-if="props.options.numbering" class="w-5 justify-center">No</th>
-                <th v-for="h in columns" :class="[h.sortable ? 'cursor-pointer' : '']"
+                <th v-for="h in columns" :key="h.data" :class="[h.sortable ? 'cursor-pointer' : '']"
                   @click="h.sortable ? handleSort(h.data) : null">
                   <div class="flex items-center gap-1" :class="h.classHeader">
                     <div v-if="h.info" class="tooltip tooltip-bottom" :data-tip="h.info">
@@ -257,11 +285,11 @@ const handleSort = (c: any) => {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(item, idx) in comData">
+              <tr v-for="(item, idx) in comData" :key="item.id || idx">
                 <td v-if="props.options.numbering" class="text-center">
                   {{ (params.page - 1) * params.limit + (idx + 1) }}
                 </td>
-                <template v-for="h in columns">
+                <template v-for="h in columns" :key="h.data">
                   <td :class="h.classContent">
                     <slot :name="`cell(${h.data})`" :value="resolveValue(item, h.data)" :item="item">
                       {{ resolveValue(item, h.data) }}
@@ -274,21 +302,23 @@ const handleSort = (c: any) => {
         </div>
       </div>
       <div class="flex justify-between mt-3 gap-3">
-        <div v-if="comData.length > 0" class="grow">Showing {{ page.rStart }} - {{ page.rEnd }} record from total {{
-          meta.total }} records. </div>
-        <div v-else class="grow">No record found.</div>
+        <div v-if="comData.length > 0" class="grow text-sm">Showing {{ page.rStart }} - {{ page.rEnd }} record from
+          total {{
+            meta.total }} records. </div>
+        <div v-else class="grow text-sm">No record found.</div>
         <div class="join">
-          <button class="join-item btn btn-sm" @click="params.page--" :disabled="params.page == 1">«</button>
-          <button v-for="i in page.numbers" class="join-item btn btn-sm" :disabled="params.page == i || i == '...'"
-            @click="params.page = i">{{ i }}</button>
-          <button class="join-item btn btn-sm" @click="params.page++"
-            :disabled="params.page == page.totalPage">»</button>
+          <button class="join-item btn btn-sm" :disabled="params.page == 1" @click="params.page--">«</button>
+          <button v-for="i in page.numbers" :key="i" class="join-item btn btn-sm"
+            :disabled="params.page == i || i == '...'" @click="typeof i === 'number' ? params.page = i : null">{{ i
+            }}</button>
+          <button class="join-item btn btn-sm" :disabled="params.page == page.totalPage || page.totalPage === 0"
+            @click="params.page++">»</button>
         </div>
-        <select v-model="params.limit" @change="params.page = 1" class="select select-sm w-16">
-          <option :value="10" selected>10</option>
-          <option :value="25">25</option>
-          <option :value="50">50</option>
-          <option :value="100">100</option>
+        <select v-model="params.limit" class="select select-sm w-20" @change="params.page = 1">
+          <option :value="10">10 / page</option>
+          <option :value="25">25 / page</option>
+          <option :value="50">50 / page</option>
+          <option :value="100">100 / page</option>
         </select>
       </div>
     </div>

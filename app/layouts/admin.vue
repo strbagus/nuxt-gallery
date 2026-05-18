@@ -59,7 +59,7 @@ const logout = async () => {
 
 <template>
   <div class="drawer lg:drawer-open">
-    <input id="my-drawer-4" type="checkbox" class="drawer-toggle" :checked="isBreakpointLg" />
+    <input id="my-drawer-4" type="checkbox" class="drawer-toggle" :checked="isBreakpointLg">
     <div class="drawer-content flex flex-col">
       <nav class="navbar w-full shadow-lg border-b border-base-300 sticky top-0 z-10 bg-base-200">
         <label for="my-drawer-4" aria-label="open sidebar" class="btn btn-square btn-ghost">
@@ -69,7 +69,7 @@ const logout = async () => {
         <div class="dropdown dropdown-end">
           <div tabindex="0" role="button" class="avatar">
             <div class="w-10 cursor-pointer rounded-full bg-gray-400">
-              <img src="https://img.daisyui.com/images/profile/demo/yellingcat@192.webp" />
+              <img src="https://img.daisyui.com/images/profile/demo/yellingcat@192.webp">
             </div>
           </div>
           <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2
@@ -86,7 +86,7 @@ const logout = async () => {
         </div>
       </nav>
       <div class="px-5 py-8 grow">
-        <div class="flex flex-col md:flex-row md:justify-between items-start md:items-center" :key="reloadKey">
+        <div :key="reloadKey" class="flex flex-col md:flex-row md:justify-between items-start md:items-center">
           <h1 class="text-2xl font-bold text-base-content">{{ title || 'Baseline' }}</h1>
           <Breadcrumb />
         </div>
@@ -100,19 +100,19 @@ const logout = async () => {
       </footer>
     </div>
     <div class="drawer-side is-drawer-close:overflow-hidden">
-      <label for="my-drawer-4" aria-label="close sidebar" class="drawer-overlay"></label>
+      <label for="my-drawer-4" aria-label="close sidebar" class="drawer-overlay" />
       <div class="flex h-dvh flex-col items-start bg-base-200 is-drawer-close:w-0 is-drawer-open:w-64">
         <div class="mx-auto py-4">
           <NuxtLink to="/admin" class="flex justify-center items-center">
-            <img src="/favicon.ico" />
+            <img src="/favicon.ico">
             <span class="font-semibold text-xl px-3">Baseline</span>
           </NuxtLink>
         </div>
-        <div class="w-full h-1 bg-linear-to-r from-base-200 via-base-300 to-base-200"></div>
+        <div class="w-full h-1 bg-linear-to-r from-base-200 via-base-300 to-base-200" />
         <ul class="menu w-full grow flex flex-nowrap overflow-y-auto">
           <SideMenu :menus />
         </ul>
-        <div class="w-full h-1 bg-linear-to-r from-base-200 via-base-300 to-base-200"></div>
+        <div class="w-full h-1 bg-linear-to-r from-base-200 via-base-300 to-base-200" />
         <div class="mx-auto py-4 text-center w-full text-xs opacity-50">v1.0.0</div>
 
       </div>
