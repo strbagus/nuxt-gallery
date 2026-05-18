@@ -1,9 +1,8 @@
 <script setup>
-import SideMenu from '@/components/SideMenu.vue';
 const props = defineProps(['menus'])
 </script>
 <template>
-  <li v-for="m in props.menus">
+  <li v-for="m in props.menus" :key="m.path || m.title">
     <template v-if="m.sub">
       <details close>
         <summary>
@@ -16,10 +15,10 @@ const props = defineProps(['menus'])
 
     </template>
     <template v-else>
-      <RouterLink :to="m.path">
+      <NuxtLink :to="m.path">
         <component :is="m.icon" :size="16" />
         <span>{{ m.title }}</span>
-      </RouterLink>
+      </NuxtLink>
     </template>
   </li>
 </template>

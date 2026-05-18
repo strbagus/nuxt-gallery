@@ -37,3 +37,12 @@ __screenshots__/
 
 # Vite
 *.timestamp-*-*.mjs
+
+# Nuxt
+.nuxt/
+.output/
+.nitro/
+.cache/
+.data/
+.env
+auth.d.ts

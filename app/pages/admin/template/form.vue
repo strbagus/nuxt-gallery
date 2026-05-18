@@ -1,9 +1,9 @@
 <script setup>
-import { onMounted, reactive } from 'vue'
-import { useRouter } from 'vue-router'
 import { SaveIcon, XIcon } from '@lucide/vue'
-import FormField from '@/components/FormField.vue'
-import { usePageMeta } from '@/composables/usePageMeta'
+
+definePageMeta({
+  layout: 'admin'
+})
 
 const router = useRouter()
 const errors = reactive({})
@@ -43,16 +43,20 @@ const handleSubmit = () => {
   if (!validate()) return
 
   console.log('Form submitted:', form)
-  router.push('/template')
+  router.push('/admin/template')
 }
 
 const handleCancel = () => {
-  router.push('/template')
+  router.push('/admin/template')
 }
 const { setPageMeta } = usePageMeta()
 
 onMounted(() => {
-  setPageMeta('Template Form')
+  setPageMeta('Template Form', [
+    { label: 'Home', href: '/admin' },
+    { label: 'Templates', href: '/admin/template' },
+    { label: 'Form' }
+  ])
 })
 </script>
 

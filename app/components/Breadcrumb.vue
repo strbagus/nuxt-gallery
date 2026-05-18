@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
-import { usePageMeta } from '@/composables/usePageMeta';
-
 interface Breadcrumb {
   label: string;
   href?: string;
@@ -12,12 +8,12 @@ const { breadcrumbs: manualBreadcrumbs } = usePageMeta()
 const route = useRoute()
 
 const breadcrumbs = computed<Breadcrumb[]>(() => {
-  if (manualBreadcrumbs.value) return manualBreadcrumbs.value
+  if (manualBreadcrumbs.value && manualBreadcrumbs.value.length > 0) return manualBreadcrumbs.value
 
   const pathNodes = route.path.split('/').filter(node => node !== '');
 
   const crumbs: Breadcrumb[] = [
-    { label: 'home', href: '/' }
+    { label: 'home', href: '/admin' }
   ];
 
   let currentPath = '';
@@ -37,10 +33,10 @@ const breadcrumbs = computed<Breadcrumb[]>(() => {
   <div class="breadcrumbs text-sm font-semibold capitalize my-4">
     <ul>
       <li v-for="(crumb, index) in breadcrumbs" :key="crumb.href || crumb.label">
-        <RouterLink v-if="crumb.href && index < breadcrumbs.length - 1" :to="crumb.href"
+        <NuxtLink v-if="crumb.href && index < breadcrumbs.length - 1" :to="crumb.href"
           class="opacity-60 hover:opacity-100 transition-opacity">
           {{ crumb.label }}
-        </RouterLink>
+        </NuxtLink>
         <span v-else class="text-base-content pointer-events-none">
           {{ crumb.label }}
         </span>

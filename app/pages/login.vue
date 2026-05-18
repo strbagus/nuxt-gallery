@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-
+definePageMeta({
+  layout: 'default'
+})
 
 const router = useRouter()
 const handleLogin = (e: any) => {
   e.preventDefault()
-  router.push('/')
+  router.push('/admin')
 }
 const ssoLogin = () => {
-  let url = window.location.origin
+  let url = typeof window !== 'undefined' ? window.location.origin : ''
   console.log("h: ", url)
 }
 </script>

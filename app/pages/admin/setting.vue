@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { usePageMeta } from '@/composables/usePageMeta';
-import { onMounted } from 'vue';
+definePageMeta({
+  layout: 'admin'
+})
 
 const { setPageMeta } = usePageMeta()
 onMounted(() => {

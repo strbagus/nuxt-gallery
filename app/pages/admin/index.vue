@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { usePageMeta } from '@/composables/usePageMeta';
 import { Database } from '@lucide/vue';
-import { onMounted } from 'vue';
-import { RouterLink } from 'vue-router';
+
+definePageMeta({
+  layout: 'admin'
+})
 
 const { setPageMeta } = usePageMeta()
 onMounted(() => {
@@ -12,10 +13,10 @@ onMounted(() => {
 <template>
   <div class="flex flex-wrap">
     <div class="w-1/4 p-3">
-      <RouterLink to="/template" class="w-full bg-base-200 p-5 flex items-center shadow-lg">
+      <NuxtLink to="/admin/template" class="w-full bg-base-200 p-5 flex items-center shadow-lg">
         <div><Database :size="84" /></div>
         <div class="pl-5 font-semibold text-xl">Total Data: 62</div>
-      </RouterLink>
+      </NuxtLink>
     </div>
   </div>
 </template>

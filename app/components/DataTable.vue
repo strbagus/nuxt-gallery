@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { ArrowDownNarrowWide, ArrowDownUp, ArrowUpNarrowWide, Info, Search } from '@lucide/vue';
-import { computed, onMounted, reactive, ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
 
 const props = defineProps({
   columns: { type: Array<any>, required: true },
@@ -79,6 +77,9 @@ const resolveValue = (obj: any, path: string) => {
   return path.split('.').reduce((acc, part) => acc && acc[part], obj);
 }
 
+const router = useRouter()
+const route = useRoute()
+
 onMounted(() => {
   loadData()
   params.limit = Number(route.query.limit) || 10
@@ -139,10 +140,8 @@ const comData = computed(() => {
   return result
 })
 
-const router = useRouter()
-const route = useRoute()
 
-let debounceTimer = null
+let debounceTimer: any = null
 watch(
   () => ({ ...params, ...props.extraParams }),
   (newParams) => {

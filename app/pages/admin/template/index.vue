@@ -1,18 +1,17 @@
 <script setup>
-import DataTable from '@/components/DataTable.vue'
-import { useConfirm } from '@/composables/useConfirm'
-import { useToast } from '@/composables/useToast'
-import { usePageMeta } from '@/composables/usePageMeta'
-import { MainService } from '@/services/Axios'
 import { PlusIcon } from '@lucide/vue'
-import { onMounted, reactive } from 'vue'
-import { useRoute } from 'vue-router'
+
+definePageMeta({
+  layout: 'admin'
+})
 
 const toast = useToast()
 const confirm = useConfirm()
 const route = useRoute()
 const { setPageMeta } = usePageMeta()
+
 const fetchData = (params) => {
+  // Use runtimeConfig if possible, but keeping Axios for now as requested/existing
   return MainService.get("/data-list.json", { params: { ...params } })
 }
 
@@ -66,7 +65,7 @@ const extraParams = reactive({
 
 onMounted(() => {
   setPageMeta('Table Template', [
-    { label: 'Home', href: '/' },
+    { label: 'Home', href: '/admin' },
     { label: 'Templates' },
     { label: 'Table View' }
   ])
@@ -115,9 +114,9 @@ const deleteItem = async () => {
     <DataTable :columns="tbColumns" :options="tbOptions" :fetch-data="fetchData" :extra-params="extraParams"
       @clear="handleClear">
       <template v-slot:topright>
-        <RouterLink to="/template/form" class="btn btn-primary btn-sm">
+        <NuxtLink to="/admin/template/form" class="btn btn-primary btn-sm">
           <PlusIcon :size="16" /> Tambah
-        </RouterLink>
+        </NuxtLink>
       </template>
 
       <template #cell(name)="{ item }">
@@ -125,7 +124,7 @@ const deleteItem = async () => {
           <span class="font-bold text-base-content">{{ item.name }}</span>
           <span class="text-xs opacity-50">{{ item.category }}</span>
           <div class="flex gap-2 flex-wrap mt-2">
-            <span v-for="tag in item.tags" class="badge badge-sm badge-primary">{{ tag }}</span>
+            <span v-for="tag in item.tags" :key="tag" class="badge badge-sm badge-primary">{{ tag }}</span>
           </div>
         </div>
       </template>

@@ -1,19 +1,7 @@
 <script setup lang="ts">
-import SideMenu from '@/components/SideMenu.vue';
-import { Form, House, LayoutTemplate, LogOutIcon, Moon, PanelLeftOpen, SlidersHorizontal, Sun, Table2 } from '@lucide/vue';
-import { computed, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import { useTheme } from '@/composables/useTheme';
-import Breadcrumb from '@/components/Breadcrumb.vue';
-import { useConfirm } from '@/composables/useConfirm';
-import { usePageMeta } from '@/composables/usePageMeta';
-const { theme, toggleTheme } = useTheme()
-const { title, layoutTitle } = usePageMeta()
+import { Form, House, LayoutTemplate, LogOutIcon, PanelLeftOpen, SlidersHorizontal, Table2 } from '@lucide/vue';
 
-const clickTheme = (e: any) => {
-  const selection = e.target.checked ? 'dark' : 'light'
-  toggleTheme(selection)
-}
+const { title, layoutTitle } = usePageMeta()
 
 const route = useRoute()
 const reloadKey = ref(route.path)
@@ -25,12 +13,12 @@ const menus = ref([
   {
     icon: House,
     title: "Home",
-    path: "/",
+    path: "/admin",
   },
   {
     icon: SlidersHorizontal,
     title: "Setting",
-    path: "/setting",
+    path: "/admin/setting",
   },
   {
     icon: LayoutTemplate,
@@ -39,19 +27,19 @@ const menus = ref([
       {
         icon: Table2,
         title: "Table View",
-        path: "/template",
+        path: "/admin/template",
       },
       {
         icon: Form,
         title: "Form",
-        path: "/template/form",
+        path: "/admin/template/form",
       }
     ]
   }
 ])
 
 const isBreakpointLg = computed(() => {
-  return window.innerWidth > 1024
+  return typeof window !== 'undefined' ? window.innerWidth > 1024 : true
 })
 const confirm = useConfirm()
 const logout = async () => {
@@ -63,7 +51,7 @@ const logout = async () => {
     type: 'primary'
   })
   if (ok) {
-    document.location.href = "/login"
+    await navigateTo('/login')
   }
 
 }
@@ -86,20 +74,12 @@ const logout = async () => {
           </div>
           <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2
             shadow-sm">
-            <li class="my-3">
+            <li class="my-3 px-4 font-semibold">
               Satrio Bagus
             </li>
             <li class="my-3">
-              <label class="swap swap-rotate">
-                <input type="checkbox" class="theme-controller" value="dark" :checked="theme ===
-                  'dark'" @change="clickTheme" />
-                <Sun class="swap-on" />
-                <Moon class="swap-off" />
-              </label>
-            </li>
-            <li class="my-3">
-              <button class="btn btn-outline btn-error" @click="logout">
-                <LogOutIcon />&nbsp;Logout
+              <button class="btn btn-outline btn-error btn-sm mx-2" @click="logout">
+                <LogOutIcon :size="16" />&nbsp;Logout
               </button>
             </li>
           </ul>
@@ -123,17 +103,17 @@ const logout = async () => {
       <label for="my-drawer-4" aria-label="close sidebar" class="drawer-overlay"></label>
       <div class="flex h-dvh flex-col items-start bg-base-200 is-drawer-close:w-0 is-drawer-open:w-64">
         <div class="mx-auto py-4">
-          <a href="/" class="flex justify-center items-center">
+          <NuxtLink to="/admin" class="flex justify-center items-center">
             <img src="/favicon.ico" />
             <span class="font-semibold text-xl px-3">Baseline</span>
-          </a>
+          </NuxtLink>
         </div>
         <div class="w-full h-1 bg-linear-to-r from-base-200 via-base-300 to-base-200"></div>
         <ul class="menu w-full grow flex flex-nowrap overflow-y-auto">
           <SideMenu :menus />
         </ul>
         <div class="w-full h-1 bg-linear-to-r from-base-200 via-base-300 to-base-200"></div>
-        <div class="mx-auto py-4">Halo</div>
+        <div class="mx-auto py-4 text-center w-full text-xs opacity-50">v1.0.0</div>
 
       </div>
     </div>

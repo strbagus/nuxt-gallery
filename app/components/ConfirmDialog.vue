@@ -1,5 +1,4 @@
 <script setup>
-import { useConfirm } from '@/composables/useConfirm'
 const { isOpen, options, confirm, cancel } = useConfirm()
 </script>
 
