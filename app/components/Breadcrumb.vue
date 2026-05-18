@@ -18,7 +18,14 @@ const breadcrumbs = computed<Breadcrumb[]>(() => {
 
   let currentPath = '';
   pathNodes.forEach((node) => {
+    const previousPath = currentPath;
     currentPath += `/${node}`;
+    
+    // Skip 'admin' node as it's already represented by 'home'
+    if (node === 'admin' && previousPath === '') {
+      return;
+    }
+
     crumbs.push({
       label: node.replace(/[-_]/g, ' '),
       href: currentPath
