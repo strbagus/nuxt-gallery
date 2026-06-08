@@ -1,6 +1,6 @@
 {
-  "name": "vbase",
-  "version": "0.0.0",
+  "name": "gallery",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
