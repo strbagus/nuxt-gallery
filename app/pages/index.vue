@@ -5,6 +5,18 @@ definePageMeta({
 const isLoad = ref(true)
 
 const items: any = ref([])
+const filters = ['all', 'public', 'private']
+const activeFilter = ref('all')
+
+const filteredItems = computed(() => {
+  if (activeFilter.value === 'public') {
+    return items.value.filter((item: any) => !item.is_private)
+  }
+  if (activeFilter.value === 'private') {
+    return items.value.filter((item: any) => item.is_private)
+  }
+  return items.value
+})
 
 const getData = async () => {
   isLoad.value = true
@@ -43,19 +55,15 @@ onMounted(() => {
 
     <div class="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-slate-850">
       <div class="flex gap-2 text-xs font-medium">
-        <button class="px-3 py-1.5 rounded-md bg-slate-800 text-cyan-400 border border-slate-700/50 transition">
-          All Collections
-        </button>
-        <button class="px-3 py-1.5 rounded-md text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition">
-          Public
-        </button>
-        <button class="px-3 py-1.5 rounded-md text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition">
-          Private
-        </button>
+        <button v-for="f in filters" @click="activeFilter = f" :class="[
+          'px-3 py-1.5 rounded-md transition capitalize',
+          activeFilter === f
+            ? 'bg-slate-800 text-cyan-400 border border-slate-700/50'
+            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border border-transparent'
+        ]">{{ f }}</button>
       </div>
-
       <span class="text-xs font-mono text-slate-500">
-        Showing {{ items.length }} Catalogs
+        Showing {{ filteredItems.length }} Catalogs
       </span>
     </div>
 
@@ -69,7 +77,7 @@ onMounted(() => {
         <div class="skeleton h-4 w-full"></div>
       </div>
     </div>
-    <div v-for="i in items" class="w-full sm:w-1/2 md:w-1/3 p-1 sm:p-3 md:p-5">
+    <div v-for="i in filteredItems" class="w-full sm:w-1/2 md:w-1/3 p-1 sm:p-3 md:p-5">
       <!-- <NuxtLink :to="i.is_private ? '#' : i.slug" :class="i.is_private && 'cursor-not-allowed'"> -->
       <NuxtLink :to="i.slug">
         <div class=" group">

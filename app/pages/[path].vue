@@ -115,10 +115,10 @@ onMounted(() => {
       <div
         class="flex flex-col space-y-2 font-mono text-xs text-slate-400 md:justify-self-end w-full
         md:w-auto md:min-w-70 bg-slate-900/50 p-4 rounded-lg border border-slate-800/60">
-        <!-- <div class="flex justify-between border-b border-slate-800/50 pb-1.5">
-          <span class="text-slate-500 uppercase">Index Date</span>
-          <span class="text-slate-200">15 Sep 2025</span>
-        </div> -->
+        <div class="flex justify-between border-b border-slate-800/50 pb-1.5">
+          <span class="text-slate-500 uppercase">Date</span>
+          <span class="text-slate-200">{{ formatDate(event.created_at) || 'null' }}</span>
+        </div>
         <div class="flex justify-between border-b border-slate-800/50 pb-1.5">
           <span class="text-slate-500 uppercase">Total</span>
           <span class="text-slate-200">{{ event.total_photos }} Photos</span>
