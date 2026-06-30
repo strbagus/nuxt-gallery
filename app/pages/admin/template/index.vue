@@ -10,7 +10,7 @@ const { setPageMeta } = usePageMeta()
 
 const fetchData = (params) => {
   // Use runtimeConfig if possible, but keeping Axios for now as requested/existing
-  return MainService.get("/data-list.json", { params: { ...params } })
+  return MainService.get("data-list.json", { params: { ...params } })
 }
 
 const tbColumns = [

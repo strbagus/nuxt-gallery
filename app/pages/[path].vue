@@ -30,7 +30,7 @@ const getData = async (slug: any) => {
   isLoad.value = true
   try {
     const limit = 25
-    const req = await PhotoService.get(`/photos/${slug}?limit=${limit}&page=${page.value}`)
+    const req = await PhotoService.get(`photos/${slug}?limit=${limit}&page=${page.value}`)
     const newData = req.data.data
 
     if (newData.length < limit) {
@@ -48,7 +48,7 @@ const getData = async (slug: any) => {
 
 const getEvent = async (slug: any) => {
   try {
-    const req = await PhotoService.get(`/events/${slug}`)
+    const req = await PhotoService.get(`events/${slug}`)
     event.value = req.data.data
   } catch (e) {
     console.log("err: ", e)

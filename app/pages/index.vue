@@ -33,7 +33,7 @@ const getData = async () => {
   isLoad.value = true
   try {
     setTimeout(() => { }, 500)
-    const req = await PhotoService.get("/events", {
+    const req = await PhotoService.get("events", {
       params: {
         page: page.value,
         limit: 9,

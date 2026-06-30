@@ -1,12 +1,12 @@
 import axios from 'axios'
 
 export const MainService = axios.create({
-  baseURL: 'http://localhost:3000/sample',
+  baseURL: `${import.meta.env.VITE_SAMPLE_API}`,
   timeout: 5000,
 })
 
 
 export const PhotoService = axios.create({
-  baseURL: 'http://localhost:8083/api/gallery',
+  baseURL: `${import.meta.env.VITE_API_URL}`,
   timeout: 5000,
 })
