@@ -2,6 +2,7 @@
 definePageMeta({
   layout: 'default'
 })
+const s3Url = (import.meta.env.VITE_S3_URL || 'https://s3.strbagus.my.id/gallery').replace(/\/$/, '')
 const items: any = ref([])
 const isLoad = ref(false)
 const page = ref(1)
@@ -114,10 +115,10 @@ onMounted(() => {
 
       <div
         class="flex flex-col space-y-2 font-mono text-xs text-slate-400 md:justify-self-end w-full
-        md:w-auto md:min-w-70 bg-slate-900/50 p-4 rounded-lg border border-slate-800/60">
+        md:w-auto md:min-w-70 bg-base-200/50 p-4 rounded-lg border border-slate-800/60">
         <div class="flex justify-between border-b border-slate-800/50 pb-1.5">
           <span class="text-slate-500 uppercase">Date</span>
-          <span class="text-slate-200">{{ formatDate(event.created_at) || 'null' }}</span>
+          <span class="text-slate-200">{{ formatDate(event.date) || 'null' }}</span>
         </div>
         <div class="flex justify-between border-b border-slate-800/50 pb-1.5">
           <span class="text-slate-500 uppercase">Total</span>
@@ -141,8 +142,8 @@ onMounted(() => {
 
       <figure class="relative aspect-4/3 overflow-hidden bg-no-repeat bg-cover bg-center cursor-pointer"
         @click="selectedImage = i"
-        :style="{ backgroundImage: `url('https://s3.strbagus.my.id/gallery/previews/${route.params.path}/sm_${i}')` }">
-        <img loading=lazy :src="`https://s3.strbagus.my.id/gallery/previews/${route.params.path}/md_${i}`"
+        :style="{ backgroundImage: `url('${s3Url}/previews/${route.params.path}/sm_${i}')` }">
+        <img loading=lazy :src="`${s3Url}/previews/${route.params.path}/md_${i}`"
           class="w-full h-full object-cover transition duration-500 hover:scale-105" :alt="'Image of ' + i">
 
         <div class="absolute bottom-0 w-full">
@@ -177,10 +178,10 @@ onMounted(() => {
         <!-- Image Container -->
         <div class="flex-1 overflow-auto flex items-center justify-center p-4" @click.self="selectedImage = null">
 
-          <img :src="`https://s3.strbagus.my.id/gallery/previews/${route.params.path}/lg_${selectedImage}`"
+          <img :src="`${s3Url}/previews/${route.params.path}/lg_${selectedImage}`"
             @click="toggleZoom" @load="isImgLoaded = true"
             class="transition-all duration-500 shadow-2xl bg-cover bg-center bg-no-repeat" :style="{
-              backgroundImage: `url('https://s3.strbagus.my.id/gallery/previews/${route.params.path}/sm_${selectedImage}')`,
+              backgroundImage: `url('${s3Url}/previews/${route.params.path}/sm_${selectedImage}')`,
               opacity: isImgLoaded ? 1 : 0
             }" :class="[
               isZoomed ? 'max-w-none max-h-none cursor-zoom-out' : 'max-w-full max-h-[80vh] object-contain cursor-zoom-in'
@@ -189,7 +190,8 @@ onMounted(() => {
 
         <!-- Footer / Actions -->
         <div class="p-6 flex justify-center gap-4 bg-black/40 backdrop-blur-sm">
-          <button class="px-6 py-2 bg-white text-black font-semibold rounded hover:bg-gray-200 transition">
+          <button class="px-6 py-2 bg-white text-black font-semibold rounded hover:bg-gray-200
+            transition cursor-pointer">
             Download HD
           </button>
         </div>
