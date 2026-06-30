@@ -12,6 +12,7 @@ const sentinel = ref(null)
 const selectedImage = ref(null)
 const isZoomed = ref(false)
 const isImgLoaded = ref(false)
+const isDownloading = ref(false)
 const event: any = ref({})
 
 const toggleZoom = () => {
@@ -22,7 +23,28 @@ const toggleZoom = () => {
 watch(selectedImage, () => {
   isZoomed.value = false
   isImgLoaded.value = false
+  isDownloading.value = false
 })
+
+const downloadHD = async () => {
+  if (!selectedImage.value || isDownloading.value) return
+  isDownloading.value = true
+  try {
+    const req = await PhotoService.get(`/photos/${route.params.path}/original/${selectedImage.value}`)
+    const { url: downloadUrl, filename } = req.data.data
+    
+    const a = document.createElement('a')
+    a.href = downloadUrl
+    a.download = filename || selectedImage.value
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  } catch (e) {
+    console.log("err: ", e)
+  } finally {
+    isDownloading.value = false
+  }
+}
 
 const getData = async (slug: any) => {
   if (isLoad.value || !hasMore.value) return
@@ -190,9 +212,9 @@ onMounted(() => {
 
         <!-- Footer / Actions -->
         <div class="p-6 flex justify-center gap-4 bg-black/40 backdrop-blur-sm">
-          <button class="px-6 py-2 bg-white text-black font-semibold rounded hover:bg-gray-200
-            transition cursor-pointer">
-            Download HD
+          <button @click="downloadHD" :disabled="isDownloading" class="px-6 py-2 bg-white text-black font-semibold rounded hover:bg-gray-200
+            transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+            {{ isDownloading ? 'Downloading...' : 'Download HD' }}
           </button>
         </div>
       </div>
