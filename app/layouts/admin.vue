@@ -50,6 +50,29 @@ const menus = ref([
 const isBreakpointLg = computed(() => {
   return typeof window !== 'undefined' ? window.innerWidth > 1024 : true
 })
+
+const isCheckingAuth = ref(true)
+const user = ref<any>(null)
+
+const checkAuth = async () => {
+  try {
+    const res = await PhotoService.get('/auth/me')
+    if (res.data && res.data.success === false) {
+      redirectToLogin()
+      return
+    }
+    user.value = res.data?.data || res.data || {}
+    isCheckingAuth.value = false
+  } catch (err) {
+    console.error('Auth verification failed:', err)
+    redirectToLogin()
+  }
+}
+
+onMounted(async () => {
+  await checkAuth()
+})
+
 const confirm = useConfirm()
 const logout = async () => {
 
@@ -67,7 +90,11 @@ const logout = async () => {
 </script>
 
 <template>
-  <div class="drawer lg:drawer-open">
+  <div v-if="isCheckingAuth" class="min-h-screen w-full flex flex-col items-center justify-center bg-base-100">
+    <span class="loading loading-spinner loading-lg text-primary"></span>
+    <p class="mt-4 text-sm text-base-content/60 font-mono">Verifying authentication...</p>
+  </div>
+  <div v-else class="drawer lg:drawer-open">
     <input id="my-drawer-4" type="checkbox" class="drawer-toggle" :checked="isBreakpointLg">
     <div class="drawer-content flex flex-col">
       <nav class="navbar w-full shadow-lg border-b border-base-300 sticky top-0 z-10 bg-base-200">
@@ -78,13 +105,13 @@ const logout = async () => {
         <div class="dropdown dropdown-end">
           <div tabindex="0" role="button" class="avatar">
             <div class="w-10 cursor-pointer rounded-full bg-gray-400">
-              <img src="https://img.daisyui.com/images/profile/demo/yellingcat@192.webp">
+              <img :src="user?.avatar || 'https://img.daisyui.com/images/profile/demo/yellingcat@192.webp'">
             </div>
           </div>
           <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2
             shadow-sm">
             <li class="my-3 px-4 font-semibold">
-              Satrio Bagus
+              {{ user?.name || user?.username || user?.email || 'Satrio Bagus' }}
             </li>
             <li class="my-3">
               <button class="btn btn-outline btn-error btn-sm mx-2" @click="logout">
