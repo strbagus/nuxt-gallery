@@ -7,8 +7,8 @@ const isLoad = ref(true)
 
 const items: any = ref([])
 const metadata: any = ref({})
-const filters = ['all', 'public', 'private']
-const activeFilter = ref('all')
+const filters = ['public', 'all']
+const activeFilter = ref('public')
 const page = ref(1)
 
 const totalPages = computed(() => {
