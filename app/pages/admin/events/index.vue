@@ -6,7 +6,7 @@ const { origin } = useRequestURL()
 const { setPageMeta } = usePageMeta()
 
 const fetchData = (params) => {
-  return PhotoService.get("events", { params: { ...params } })
+  return PhotoService.get("events/with-salt", { params: { ...params } })
 }
 
 const tbColumns = [
