@@ -14,11 +14,17 @@ const menus = ref([
     path: "/admin",
   },
   {
-    icon: 'lucide:sliders-horizontal',
-    title: "Setting",
-    path: "/admin/setting",
+    icon: 'lucide:layout-template',
+    title: "Events",
+    sub: [
+      {
+        icon: 'lucide:table-2',
+        title: "View",
+        path: "/admin/events",
+      }
+    ]
   },
-  {
+  /* {
     icon: 'lucide:layout-template',
     title: "Templates",
     sub: [
@@ -33,6 +39,11 @@ const menus = ref([
         path: "/admin/template/form",
       }
     ]
+  }, */
+  {
+    icon: 'lucide:sliders-horizontal',
+    title: "Setting",
+    path: "/admin/setting",
   }
 ])
 
@@ -49,7 +60,7 @@ const logout = async () => {
     type: 'primary'
   })
   if (ok) {
-    await navigateTo('/login')
+    await navigateTo('/')
   }
 
 }
