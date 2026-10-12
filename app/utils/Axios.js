@@ -17,6 +17,7 @@ let isRedirecting = false
 
 export const redirectToLogin = () => {
   if (typeof window === 'undefined' || isRedirecting) return
+  if (!window.location.pathname.startsWith('/admin')) return
   isRedirecting = true
   const authBase = (import.meta.env.VITE_AUTH_URL || '').replace(/\/$/, '')
   if (!authBase) {
@@ -54,6 +55,10 @@ PhotoService.interceptors.response.use(
     const originalRequest = error?.config
 
     if (!error.response || error.response.status !== 401 || !originalRequest) {
+      return Promise.reject(error)
+    }
+
+    if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/admin')) {
       return Promise.reject(error)
     }
 
